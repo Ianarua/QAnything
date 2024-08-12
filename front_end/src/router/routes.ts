@@ -13,57 +13,57 @@ export const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('@/layout/index.vue'),
-    redirect: '/home',
+    redirect: '/quickstart',
     children: [
-      {
-        path: '/home',
-        name: 'home',
-        component: () => import('@/views/Home.vue'),
-        meta: {
-          title: '首页',
-        },
-      },
-      {
-        path: '/bots',
-        name: 'bots',
-        component: () => import('@/views/bots/Bots.vue'),
-        children: [
-          {
-            path: '/bots',
-            name: 'bots',
-            component: () => import('@/views/bots/children/BotsManage.vue'),
-            meta: {
-              requiresAuth: true,
-            },
-          },
-          {
-            path: '/bots/:botId/edit',
-            name: 'edit',
-            component: () => import('@/views/bots/children/BotEdit.vue'),
-            meta: {
-              requiresAuth: true,
-            },
-            children: [
-              {
-                path: '/bots/:botId/edit',
-                name: 'edit',
-                component: () => import('@/views/bots/children/EditDetail.vue'),
-                meta: {
-                  requiresAuth: true,
-                },
-              },
-              {
-                path: '/bots/:botId/publish',
-                name: 'publish',
-                component: () => import('@/views/bots/children/BotPublish.vue'),
-                meta: {
-                  requiresAuth: true,
-                },
-              },
-            ],
-          },
-        ],
-      },
+      // {
+      //   path: '/home',
+      //   name: 'home',
+      //   component: () => import('@/views/Home.vue'),
+      //   meta: {
+      //     title: '首页',
+      //   },
+      // },
+      // {
+      //   path: '/bots',
+      //   name: 'bots',
+      //   component: () => import('@/views/bots/Bots.vue'),
+      //   children: [
+      //     {
+      //       path: '/bots',
+      //       name: 'bots',
+      //       component: () => import('@/views/bots/children/BotsManage.vue'),
+      //       meta: {
+      //         requiresAuth: true,
+      //       },
+      //     },
+      //     {
+      //       path: '/bots/:botId/edit',
+      //       name: 'edit',
+      //       component: () => import('@/views/bots/children/BotEdit.vue'),
+      //       meta: {
+      //         requiresAuth: true,
+      //       },
+      //       children: [
+      //         {
+      //           path: '/bots/:botId/edit',
+      //           name: 'edit',
+      //           component: () => import('@/views/bots/children/EditDetail.vue'),
+      //           meta: {
+      //             requiresAuth: true,
+      //           },
+      //         },
+      //         {
+      //           path: '/bots/:botId/publish',
+      //           name: 'publish',
+      //           component: () => import('@/views/bots/children/BotPublish.vue'),
+      //           meta: {
+      //             requiresAuth: true,
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
       {
         path: '/quickstart',
         name: 'quickstart',
@@ -71,13 +71,13 @@ export const routes: RouteRecordRaw[] = [
       },
     ],
   },
-  {
-    path: '/bots/:botId/share',
-    name: 'share',
-    component: () => import('@/views/bots/children/BotShare.vue'),
-  },
+  // {
+  //   path: '/bots/:botId/share',
+  //   name: 'share',
+  //   component: () => import('@/views/bots/children/BotShare.vue'),
+  // },
   {
     path: '/:catchAll(.*)',
-    redirect: '/home',
+    redirect: '/quickstart',
   },
 ];

@@ -37,25 +37,25 @@
         <span class="line"></span>
         <span :class="[language === 'en' ? 'active' : '']" @click="changLanguage('en')">En</span>
       </li>
-      <li>
-        <a-popover placement="bottomRight" overlay-class-name="cooperate">
-          <template #content>
-            <p>Aldoud_Business@corp.youdao.com</p>
-          </template>
-          <template #title>
-            <span>{{ header.cooperationMore }}</span>
-          </template>
-          <div class="myspan">
-            <img src="../assets/home/icon-email.png" alt="合作咨询" /><span>{{
-              header.cooperation
-            }}</span>
-          </div>
-        </a-popover>
-      </li>
+      <!--      <li>-->
+      <!--        <a-popover placement="bottomRight" overlay-class-name="cooperate">-->
+      <!--          <template #content>-->
+      <!--            <p>Aldoud_Business@corp.youdao.com</p>-->
+      <!--          </template>-->
+      <!--          <template #title>-->
+      <!--            <span>{{ header.cooperationMore }}</span>-->
+      <!--          </template>-->
+      <!--          <div class="myspan">-->
+      <!--            <img src="../assets/home/icon-email.png" alt="合作咨询" /><span>{{-->
+      <!--              header.cooperation-->
+      <!--            }}</span>-->
+      <!--          </div>-->
+      <!--        </a-popover>-->
+      <!--      </li>-->
     </ul>
-    <div class="user">
-      <img src="../assets/home/avatar.png" alt="头像" />
-    </div>
+    <!--    <div class="user">-->
+    <!--      <img src="../assets/home/avatar.png" alt="头像" />-->
+    <!--    </div>-->
   </div>
 </template>
 <script lang="ts" setup>
@@ -66,7 +66,7 @@ import { useLanguage } from '@/store/useLanguage';
 import { getLanguage } from '@/language/index';
 import routeController from '@/controller/router';
 
-const header = getLanguage().header;
+// const header = getLanguage().header;
 const { language } = storeToRefs(useLanguage());
 const { navIndex } = storeToRefs(useHeader());
 const { setLanguage } = useLanguage();
@@ -78,14 +78,14 @@ const navList = [
     name: getLanguage().header.quickStart,
     value: 2,
   },
-  {
-    name: getLanguage().header.knowledge,
-    value: 0,
-  },
-  {
-    name: 'Bots',
-    value: 1,
-  },
+  // {
+  //   name: getLanguage().header.knowledge,
+  //   value: 0,
+  // },
+  // {
+  //   name: 'Bots',
+  //   value: 1,
+  // },
 ];
 
 const changLanguage = (lang: string) => {
@@ -103,13 +103,13 @@ const setNavIdx = value => {
     return;
   }
   setNavIndex(value);
-  if (value === 0) {
-    changePage('/home');
-  } else if (value === 1) {
-    changePage('/bots');
-  } else if (value === 2) {
-    changePage('/quickstart');
-  }
+  // if (value === 0) {
+  //   changePage('/home');
+  // } else if (value === 1) {
+  //   changePage('/bots');
+  // } else if (value === 2) {
+  changePage('/quickstart');
+  // }
 };
 
 // header的item-icon选择

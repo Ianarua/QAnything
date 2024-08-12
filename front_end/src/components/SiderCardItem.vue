@@ -14,10 +14,10 @@
       <template #content>
         <div class="tools-box">
           <ul>
-            <li @click="manage({ kb_name: cardData.title, kb_id: cardData.kbId })">
-              <SvgIcon class="edit" name="icon-manage"></SvgIcon>
-              <span class="tool-name">{{ common.manage }}</span>
-            </li>
+            <!--            <li @click="manage({ kb_name: cardData.title, kb_id: cardData.kbId })">-->
+            <!--              <SvgIcon class="edit" name="icon-manage"></SvgIcon>-->
+            <!--              <span class="tool-name">{{ common.manage }}</span>-->
+            <!--            </li>-->
             <li @click="deleteKnowledgeBase({ kb_name: cardData.title, kb_id: cardData.kbId })">
               <SvgIcon class="delete" name="delete"></SvgIcon>
               <span class="tool-name">{{ common.delete }}</span>
@@ -35,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { pageStatus } from '@/utils/enum';
+// import { pageStatus } from '@/utils/enum';
 import { IKnowledgeItem } from '@/utils/types';
 
 import { IHistoryList, useQuickStart } from '@/store/useQuickStart';
 import { useKnowledgeBase } from '@/store/useKnowledgeBase';
 import { getLanguage } from '@/language';
 
-const { setShowDeleteModal, setCurrentId, setCurrentKbName, setDefault } = useKnowledgeBase();
+const { setShowDeleteModal, setCurrentId } = useKnowledgeBase();
 const { showDeleteModal } = storeToRefs(useKnowledgeBase());
 const common = getLanguage().common;
 const { chatId, showLoading, deleteChatId } = storeToRefs(useQuickStart());
@@ -60,12 +60,12 @@ interface IProps {
 const props = defineProps<IProps>();
 const { cardData } = toRefs(props);
 
-// 管理知识库
-const manage = (item: IKnowledgeItem) => {
-  setCurrentId(item.kb_id);
-  setCurrentKbName(item.kb_name);
-  setDefault(pageStatus.optionlist);
-};
+// // 管理知识库
+// const manage = (item: IKnowledgeItem) => {
+//   setCurrentId(item.kb_id);
+//   setCurrentKbName(item.kb_name);
+//   setDefault(pageStatus.optionlist);
+// };
 
 // 删除知识库
 const deleteKnowledgeBase = (item: IKnowledgeItem) => {
