@@ -16,16 +16,16 @@
       />
     </div>
     <div class="header-navs">
-      <div
-        v-for="item in navList"
-        :key="item.name"
-        :class="['nav-item', navIndex === item.value ? 'nav-item-active' : '']"
-        @click="setNavIdx(item.value)"
-      >
-        <!--        <div :class="['item-icon', item.value === 0 ? 'knowledge-icon' : 'bot-icon']"></div>-->
-        <div :class="['item-icon', getIcon(item.value)]"></div>
-        {{ item.name }}
-      </div>
+      <!--      <div-->
+      <!--        v-for="item in navList"-->
+      <!--        :key="item.name"-->
+      <!--        :class="['nav-item', navIndex === item.value ? 'nav-item-active' : '']"-->
+      <!--        @click="setNavIdx(item.value)"-->
+      <!--      >-->
+      <!--        &lt;!&ndash;        <div :class="['item-icon', item.value === 0 ? 'knowledge-icon' : 'bot-icon']"></div>&ndash;&gt;-->
+      <!--        <div :class="['item-icon', getIcon(item.value)]"></div>-->
+      <!--        {{ item.name }}-->
+      <!--      </div>-->
     </div>
     <ul>
       <!-- <li @click="goDetail('https://ai.youdao.com/qanything.s')">
@@ -61,32 +61,32 @@
 <script lang="ts" setup>
 // import { useUser } from '@/store/useUser';
 // const { userInfo } = storeToRefs(useUser());
-import { useHeader } from '@/store/useHeader';
+// import { useHeader } from '@/store/useHeader';
 import { useLanguage } from '@/store/useLanguage';
-import { getLanguage } from '@/language/index';
-import routeController from '@/controller/router';
+// import { getLanguage } from '@/language/index';
+// import routeController from '@/controller/router';
 
 // const header = getLanguage().header;
 const { language } = storeToRefs(useLanguage());
-const { navIndex } = storeToRefs(useHeader());
+// const { navIndex } = storeToRefs(useHeader());
 const { setLanguage } = useLanguage();
-const { setNavIndex } = useHeader();
-const { changePage } = routeController();
+// const { setNavIndex } = useHeader();
+// const { changePage } = routeController();
 
-const navList = [
-  {
-    name: getLanguage().header.quickStart,
-    value: 2,
-  },
-  // {
-  //   name: getLanguage().header.knowledge,
-  //   value: 0,
-  // },
-  // {
-  //   name: 'Bots',
-  //   value: 1,
-  // },
-];
+// const navList = [
+//   {
+//     name: getLanguage().header.quickStart,
+//     value: 2,
+//   },
+//   // {
+//   //   name: getLanguage().header.knowledge,
+//   //   value: 0,
+//   // },
+//   // {
+//   //   name: 'Bots',
+//   //   value: 1,
+//   // },
+// ];
 
 const changLanguage = (lang: string) => {
   setLanguage(lang);
@@ -98,34 +98,34 @@ const goDetail = (url: string) => {
   window.location.href = url;
 };
 
-const setNavIdx = value => {
-  if (navIndex.value === value) {
-    return;
-  }
-  setNavIndex(value);
-  // if (value === 0) {
-  //   changePage('/home');
-  // } else if (value === 1) {
-  //   changePage('/bots');
-  // } else if (value === 2) {
-  changePage('/quickstart');
-  // }
-};
+// const setNavIdx = value => {
+//   if (navIndex.value === value) {
+//     return;
+//   }
+//   setNavIndex(value);
+//   // if (value === 0) {
+//   //   changePage('/home');
+//   // } else if (value === 1) {
+//   //   changePage('/bots');
+//   // } else if (value === 2) {
+//   changePage('/quickstart');
+//   // }
+// };
 
 // header的item-icon选择
-const iconMap = new Map([
-  [0, 'knowledge-icon'],
-  [1, 'bot-icon'],
-  [2, 'quick-icon'],
-]);
-const getIcon = itemValue => {
-  return iconMap.get(itemValue);
-};
+// const iconMap = new Map([
+//   [0, 'knowledge-icon'],
+//   [1, 'bot-icon'],
+//   [2, 'quick-icon'],
+// ]);
+// const getIcon = itemValue => {
+//   return iconMap.get(itemValue);
+// };
 </script>
 <style lang="scss" scoped>
 .header {
   width: 100vw;
-  min-width: 1200px;
+  //min-width: 1200px;
   height: 64px;
   display: flex;
   align-items: center;

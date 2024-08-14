@@ -68,7 +68,7 @@
                         @click="hideSourceList(index)"
                       />
                     </div>
-                    <div v-show="showSourceIdxs.includes(index)" class="source-list">
+                    <div v-if="showSourceIdxs.includes(index)" class="source-list">
                       <div
                         v-for="(sourceItem, sourceIndex) in item.source"
                         :key="sourceIndex"
@@ -173,20 +173,13 @@
             />
           </div>
           <div class="send-box">
-            <div class="scroll-btn-div">
-              <a-button type="primary" shape="circle" size="large" @click="scrollBottom">
-                <template #icon>
-                  <SvgIcon name="scroll" />
-                </template>
-              </a-button>
-            </div>
             <a-textarea
               v-model:value="question"
               class="send-textarea"
               max-length="200"
               :bordered="false"
               :placeholder="common.problemPlaceholder"
-              :auto-size="{ minRows: 4, maxRows: 8 }"
+              :auto-size="{ minRows: 1, maxRows: 8 }"
               @keydown="textKeydownHandle"
             />
             <div class="send-action">
@@ -216,7 +209,7 @@
                   <SvgIcon name="chat-setting" />
                 </span>
               </a-popover>
-              <a-button type="primary" :disabled="showLoading" shape="circle" @click="send">
+              <a-button type="primary" :disabled="showLoading" @click="send">
                 <SvgIcon name="sendplane" />
               </a-button>
             </div>
@@ -224,10 +217,25 @@
         </div>
       </div>
     </div>
+    <div class="scroll-btn-div">
+      <!--              <a-button type="primary" shape="circle" size="large" @click="scrollBottom">-->
+      <!--                <template #icon>-->
+      <!--                  <SvgIcon name="scroll" />-->
+      <!--              <a-image src="@/assets/home/scroll-down.png" />-->
+      <img
+        class="avatar"
+        src="@/assets/home/scroll-down.png"
+        alt="滑到底部"
+        @click="scrollBottom"
+      />
+      <!--                </template>-->
+      <!--              </a-button>-->
+    </div>
   </div>
   <ChatSettingDialog ref="chatSettingForDialogRef" />
   <DefaultModal :content="content" :confirm-loading="confirmLoading" @ok="confirm" />
   <FileUploadDialog :dialog-type="1" />
+  <ChatSourceDialog ref="chatSourceDialogRef" />
 </template>
 
 <script setup lang="ts">
@@ -244,7 +252,6 @@ import urlResquest, { userId } from '@/services/urlConfig';
 import { useChat } from '@/store/useChat';
 import html2canvas from 'html2canvas';
 import { ChatInfoClass, resultControl } from '@/utils/utils';
-import { useChatSource } from '@/store/useChatSource';
 import { useLanguage } from '@/store/useLanguage';
 import { useQuickStart } from '@/store/useQuickStart';
 import DefaultModal from '@/components/DefaultModal.vue';
@@ -258,6 +265,7 @@ import { useUploadFiles } from '@/store/useUploadFiles';
 import { useChatSetting } from '@/store/useChatSetting';
 import FileUploadDialog from '@/components/FileUploadDialog.vue';
 import ChatInfoPanel from '@/components/ChatInfoPanel.vue';
+import ChatSourceDialog from '@/components/ChatSourceDialog.vue';
 
 const { common, home } = getLanguage();
 
@@ -269,10 +277,8 @@ const {
   addChatList,
   clearChatList,
   getHistoryById,
-  renameHistory,
   addFileToBeSendList,
 } = useQuickStart();
-const { setChatSourceVisible, setSourceType, setSourceUrl, setTextContent } = useChatSource();
 const { chatSettingFormActive } = storeToRefs(useChatSetting());
 const { showDefault } = storeToRefs(useKnowledgeBase());
 const { setModalVisible, setModalTitle } = useKnowledgeModal();
@@ -283,6 +289,8 @@ const { language } = storeToRefs(useLanguage());
 declare module _czc {
   const push: (array: any) => void;
 }
+
+const chatSourceDialogRef = ref<InstanceType<typeof ChatSourceDialog>>(null);
 
 // 当前对话的historyList
 const historyList = computed(() => {
@@ -416,7 +424,7 @@ const addQuestion = q => {
   QA_List.value.push({
     question: q,
     type: 'user',
-    fileDataList: [...fileBlockArr.value],
+    fileDataList: [...fileBlockArr.value.filter(item => item.status !== 'red')],
   });
   scrollBottom();
 };
@@ -452,9 +460,9 @@ const beforeSend = async title => {
     // 判断需不需要新建对话, 为null跳出
     if (chatId.value !== null) {
       // 判断是不是刚新建的对话（title = '未命名对话'）是就重命名知识库名字为第一句话
-      if (getHistoryById(chatId.value).title === '未命名对话') {
-        renameHistory(chatId.value, title);
-      }
+      // if (getHistoryById(chatId.value).title === '未命名对话') {
+      //   renameHistory(chatId.value, title);
+      // }
       return;
     }
     // 需要新建对话（正常操作不会进入这里，因为点击开启新对话就是新建了）
@@ -481,10 +489,10 @@ const send = async () => {
     message.warn('正在聊天中...请等待结束');
     return;
   }
-  if (!(await checkChatSetting())) {
-    message.error('模型设置错误，请先检查模型配置');
-    return;
-  }
+  // if (!(await checkChatSetting())) {
+  //   message.error('模型设置错误，请先检查模型配置');
+  //   return;
+  // }
   const q = question.value;
   await beforeSend(q);
   question.value = '';
@@ -704,68 +712,20 @@ const handleModalChange = newVal => {
 
 // 模型配置是否正确
 const chatSettingForDialogRef = ref<InstanceType<typeof ChatSettingDialog>>();
-const checkChatSetting = () => {
-  return chatSettingForDialogRef.value.handleOk();
+// const checkChatSetting = () => {
+//   return chatSettingForDialogRef.value.handleOk();
+// };
+
+const checkFileType = async fileName => {
+  nextTick(() => {
+    return chatSourceDialogRef.value.checkFileType(fileName);
+  });
 };
 
-// 检查信息来源的文件是否支持窗口化渲染
-let supportSourceTypes = ['pdf', 'docx', 'xlsx', 'txt', 'md', 'jpg', 'png', 'jpeg'];
-const checkFileType = filename => {
-  if (!filename) {
-    return false;
-  }
-  const arr = filename.split('.');
-  if (arr.length) {
-    const suffix = arr.pop();
-    return supportSourceTypes.includes(suffix);
-  } else {
-    return false;
-  }
+const handleChatSource = async file => {
+  await nextTick();
+  chatSourceDialogRef.value.handleChatSource(file);
 };
-
-const handleChatSource = file => {
-  const isSupport = checkFileType(file.file_name);
-  if (isSupport) {
-    queryFile(file);
-  }
-};
-
-async function queryFile(file) {
-  try {
-    setSourceUrl(null);
-    const res: any = await resultControl(await urlResquest.getFile({ file_id: file.file_id }));
-    const suffix = file.file_name.split('.').pop();
-    const b64Type = getB64Type(suffix);
-    setSourceType(suffix);
-    setSourceUrl(`data:${b64Type};base64,${res.file_base64}`);
-    if (suffix === 'txt') {
-      const decodedTxt = atob(res.file_base64);
-      const correctStr = decodeURIComponent(escape(decodedTxt));
-      setTextContent(correctStr);
-      setChatSourceVisible(true);
-    } else {
-      setChatSourceVisible(true);
-    }
-  } catch (e) {
-    message.error(e.msg || '获取文件失败');
-  }
-}
-
-let b64Types = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'text/plain',
-  'text/markdown',
-  'image/jpeg',
-  'image/png',
-  'image/jpeg',
-];
-
-function getB64Type(suffix) {
-  const index = supportSourceTypes.indexOf(suffix);
-  return b64Types[index];
-}
 
 onBeforeUnmount(() => {
   kbIdCopy.value = kbId.value;
@@ -774,7 +734,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+$avatar-width: 96px;
+
 .container {
+  position: relative;
   width: 100%;
   height: calc(100vh - 64px);
   background-color: #26293b;
@@ -785,6 +748,7 @@ onBeforeUnmount(() => {
   height: 100%;
   margin: 0 auto;
   border-radius: 12px 0 0 0;
+  padding: 28px 28px 0 28px;
   display: flex;
   flex-direction: column;
   background: #f3f6fd;
@@ -793,14 +757,17 @@ onBeforeUnmount(() => {
 
 .chat {
   margin: 0 auto;
-  width: 35%;
-  min-width: 500px;
+  //width: 750px;
+  //min-width: 500px;
+  max-width: 816px;
   padding: 28px 0 0 0;
   flex: 1;
   overflow-y: auto;
 
   #chat-ul {
-    padding-bottom: 20px;
+    //padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
     background: #f3f6fd;
     overflow: hidden;
   }
@@ -1037,27 +1004,16 @@ onBeforeUnmount(() => {
 
 .question-box {
   width: 100%;
-  margin-bottom: 30px;
+  margin: 32px 0;
 
   .question {
-    width: 40%;
-    min-width: 550px;
+    //width: 40%;
+    //min-width: 550px;
+    max-width: calc(816px - $avatar-width);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    .scroll-btn-div {
-      position: absolute;
-      top: -40px;
-      right: -40px;
-
-      svg {
-        width: 20px;
-        height: 20px;
-        margin-top: 5px;
-      }
-    }
 
     :deep(.ant-input-affix-wrapper) {
       width: 100%;
@@ -1158,8 +1114,9 @@ onBeforeUnmount(() => {
 
       :deep(.ant-btn-primary) {
         width: 36px;
-        height: 36px;
-        padding: 8px;
+        height: 26px;
+        padding: 6px 8px 6px 6px;
+        border-radius: 18px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1181,6 +1138,18 @@ onBeforeUnmount(() => {
         height: 24px;
       }
     }
+  }
+}
+
+.scroll-btn-div {
+  position: absolute;
+  bottom: 150px;
+  right: 32px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
   }
 }
 

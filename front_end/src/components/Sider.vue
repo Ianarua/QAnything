@@ -48,7 +48,6 @@
         />
       </div>
     </div>
-    <ChatSourceDialog />
     <DeleteModal />
     <UrlUploadDialog />
     <EditQaSetDialog />
@@ -66,7 +65,6 @@ import EditQaSetDialog from '@/components/EditQaSetDialog.vue';
 import NewBotsDialog from '@/components/Bots/NewBotsDialog.vue';
 import SelectKnowledgeDialog from '@/components/Bots/SelectKnowledgeDialog.vue';
 import CopyUrlDialog from '@/components/Bots/CopyUrlDialog.vue';
-import ChatSourceDialog from '@/components/ChatSourceDialog.vue';
 import { useHeader } from '@/store/useHeader';
 import routeController from '@/controller/router';
 import SiderCardItem from '@/components/SiderCardItem.vue';
@@ -157,13 +155,22 @@ const quickClickHandle = async (type: 0 | 1, cardData?: IHistoryList) => {
     QA_List.value = [];
     kbId.value = cardData.kbId;
     currentKbName.value = cardData.title;
-    const chat = getChatById(chatId.value);
-    chat.list.forEach(item => {
-      if (item.type === 'user') {
-        addQuestion(item.question, item.fileDataList);
-      } else if (item.type === 'ai') {
-        addAnswer(item.question, item.itemInfo, item.answer, item.picList, item.qaId, item.source);
-      }
+    nextTick(() => {
+      const chat = getChatById(chatId.value);
+      chat.list.forEach(item => {
+        if (item.type === 'user') {
+          addQuestion(item.question, item.fileDataList);
+        } else if (item.type === 'ai') {
+          addAnswer(
+            item.question,
+            item.itemInfo,
+            item.answer,
+            item.picList,
+            item.qaId,
+            item.source
+          );
+        }
+      });
     });
   }
 };
