@@ -759,6 +759,7 @@ $avatar-width: 96px;
   margin: 0 auto;
   //width: 750px;
   //min-width: 500px;
+  width: 100%;
   max-width: 816px;
   padding: 28px 0 0 0;
   flex: 1;
