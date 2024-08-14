@@ -18,8 +18,12 @@
             <!--              <SvgIcon class="edit" name="icon-manage"></SvgIcon>-->
             <!--              <span class="tool-name">{{ common.manage }}</span>-->
             <!--            </li>-->
+            <li @click="editKnowledgeBase()">
+              <SvgIcon class="edit" name="edit" />
+              <span class="tool-name">{{ common.rename }}</span>
+            </li>
             <li @click="deleteKnowledgeBase({ kb_name: cardData.title, kb_id: cardData.kbId })">
-              <SvgIcon class="delete" name="delete"></SvgIcon>
+              <SvgIcon class="delete" name="delete" />
               <span class="tool-name">{{ common.delete }}</span>
             </li>
           </ul>
@@ -27,7 +31,16 @@
       </template>
       <div class="content">
         <div class="title">
-          <p class="title-text">{{ cardData.title }}</p>
+          <p v-if="!isEdit" class="title-text">{{ cardData.title }}</p>
+          <div v-else-if="isEdit" class="editing">
+            <p class="title-text">
+              <a-input v-model:value="editTitle" type="text" />
+            </p>
+            <span class="icon-box">
+              <SvgIcon class="edit" name="card-confirm" @click.stop="ok()"></SvgIcon>
+              <SvgIcon class="delete" name="card-cancel" @click.stop="close()"></SvgIcon>
+            </span>
+          </div>
         </div>
       </div>
     </a-popover>
@@ -41,11 +54,13 @@ import { IKnowledgeItem } from '@/utils/types';
 import { IHistoryList, useQuickStart } from '@/store/useQuickStart';
 import { useKnowledgeBase } from '@/store/useKnowledgeBase';
 import { getLanguage } from '@/language';
+import message from 'ant-design-vue/es/message';
 
 const { setShowDeleteModal, setCurrentId } = useKnowledgeBase();
 const { showDeleteModal } = storeToRefs(useKnowledgeBase());
 const common = getLanguage().common;
 const { chatId, showLoading, deleteChatId } = storeToRefs(useQuickStart());
+const { renameHistory } = useQuickStart();
 
 interface IHistoryListOptional extends Partial<IHistoryList> {
   title: string;
@@ -66,6 +81,34 @@ const { cardData } = toRefs(props);
 //   setCurrentKbName(item.kb_name);
 //   setDefault(pageStatus.optionlist);
 // };
+
+const isEdit = ref(false);
+
+// 暂存修改后的title
+const editTitle = ref('');
+
+// 点击修改标题
+const editKnowledgeBase = () => {
+  editTitle.value = cardData.value.title;
+  isEdit.value = true;
+};
+
+//确定修改
+const ok = async () => {
+  try {
+    renameHistory(chatId.value, editTitle.value);
+    editTitle.value = '';
+    isEdit.value = false;
+    message.success(common.renameSucceeded);
+  } catch (err) {
+    message.error(err.msg || common.renameFailed);
+  }
+};
+//取消修改
+const close = () => {
+  editTitle.value = '';
+  isEdit.value = false;
+};
 
 // 删除知识库
 const deleteKnowledgeBase = (item: IKnowledgeItem) => {
@@ -140,6 +183,44 @@ const deleteKnowledgeBase = (item: IKnowledgeItem) => {
     font-size: 14px;
     line-height: 22px;
     color: #222222;
+
+    .editing {
+      display: flex;
+      align-items: center;
+
+      .title-text {
+        width: 160px;
+        height: 28px;
+        color: #ffffff;
+
+        :deep(.ant-input) {
+          padding: 2px 11px;
+        }
+      }
+
+      .icon-box {
+        color: #fff;
+        display: flex;
+
+        .edit,
+        .delete {
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+        }
+
+        .edit {
+          margin-left: 12px;
+          margin-right: 8px;
+        }
+      }
+
+      :deep(.ant-input) {
+        color: #999999;
+        background: #fff;
+        border-color: #7261e9;
+      }
+    }
 
     .title-text {
       width: 169px;
