@@ -57,7 +57,7 @@ const props = defineProps<IProps>();
 const { fileData, kbId } = toRefs(props);
 
 const isLoading = computed(() => {
-  return fileStatus.value === 'gray';
+  return fileData.value.status === 'gray' || fileData.value.status === 'uploading';
 });
 
 const fileInfo = computed(() => {
@@ -65,12 +65,12 @@ const fileInfo = computed(() => {
 });
 
 const fileIcon = computed(() => {
-  if (fileStatus.value === 'red') {
+  if (fileData.value.status === 'red') {
     return 'file-error';
-  } else if (fileStatus.value === 'green') {
-    return 'file-' + iconMap.get(fileInfo.value.fileExtension);
-  } else {
+  } else if (fileData.value.status === 'uploading') {
     return 'file-unknown';
+  } else {
+    return 'file-' + iconMap.get(fileInfo.value.fileExtension);
   }
 });
 
@@ -98,34 +98,45 @@ const iconMap: Map<string, string> = new Map([
  * 名字不变，上传中 -> 解析中 -> 后缀名，全程是loading
  */
 const fileStatusMap = new Map([
+  ['uploading', '上传中'],
   ['gray', '上传中'],
   ['yellow', '解析中'],
   ['green', '解析成功'],
   ['red', '解析失败'],
+  ['error', '上传失败'],
 ]);
 
 const fileProgress = ref(0);
 
+let timer = ref(null);
+
 const getDetail = () => {
-  let timer = ref(null);
+  // 防止重复调用getDetail
+  if (timer.value !== null) {
+    clearInterval(timer.value);
+    timer.value = null;
+  }
   timer.value = setInterval(async () => {
-    // soft上传重复名字的时候，传来的是fileId: ''
-    if (fileData.value.file_id === '' && fileData.value.status !== 'loading') {
-      fileData.value.status = 'red';
-    }
-    if (fileData.value.status === 'green' || fileData.value.status === 'red') {
-      clearInterval(timer.value);
-      timer.value = null;
-    } else {
-      const res = (await resultControl(
-        await urlResquest.fileList({
-          kb_id: kbId.value,
-          file_id: fileData.value.file_id,
-        })
-      )) as any;
-      fileData.value.status = res.details[0]?.status || 'red';
-      if (res.details[0]?.status === 'yellow') {
-        fileProgress.value = parseInt(res.details[0]?.msg.match(/\d+/)[0], 10);
+    // 先判断上传完没
+    if (fileData.value.status !== 'uploading') {
+      if (
+        fileData.value.status === 'green' ||
+        fileData.value.status === 'red' ||
+        fileData.value.status === 'error'
+      ) {
+        clearInterval(timer.value);
+        timer.value = null;
+      } else {
+        const res = (await resultControl(
+          await urlResquest.fileList({
+            kb_id: kbId.value,
+            file_id: fileData.value.file_id,
+          })
+        )) as any;
+        fileData.value.status = res.details[0]?.status || 'error';
+        if (res.details[0]?.status === 'yellow') {
+          fileProgress.value = parseInt(res.details[0]?.msg.match(/\d+/)[0], 10);
+        }
       }
     }
   }, 1000);
@@ -139,9 +150,13 @@ onMounted(() => {
   getDetail();
 });
 
+onBeforeMount(() => {
+  clearInterval(timer.value);
+});
+
 // 预览
 const previewHandle = () => {
-  if (fileStatus.value === 'yellow' || fileStatus.value === 'green') {
+  if (fileData.value.status === 'yellow' || fileData.value.status === 'green') {
     handleChatSource(fileData.value);
   } else {
     message.warn('解析中、解析完成才可以预览');

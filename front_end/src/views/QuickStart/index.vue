@@ -335,7 +335,7 @@ const scrollBottom = () => {
 // fileBlock的数组，为缓存拿的和这次上传的联合起来的
 const fileBlockArr = computed<IFileListItem[]>(() => {
   const arr = historyList.value?.fileToBeSendList.concat(uploadFileListQuick?.value) || [];
-  console.log(arr);
+  console.log('arr', [...arr]);
   return arr.filter(item => item.status !== 'error');
   // return arr;
 });
@@ -347,11 +347,17 @@ onMounted(() => {
 
 // 切换到知识库或者bot，切换对话的在Sider里面
 onBeforeUnmount(() => {
+  saveFileToBeSendList();
+});
+
+const saveFileToBeSendList = () => {
   if (uploadFileListQuick.value.length) {
     addFileToBeSendList(chatId.value, [...uploadFileListQuick.value]);
     initUploadFileListQuick();
   }
-});
+};
+
+window.addEventListener('beforeunload', saveFileToBeSendList);
 
 // 聊天框keydown，不允许enter换行，alt/ctrl/shift/meta(Command或win) + enter可换行
 const textKeydownHandle = e => {
@@ -730,9 +736,15 @@ const handleChatSource = async file => {
 };
 
 onBeforeUnmount(() => {
+  kbIdUnmount();
+});
+
+const kbIdUnmount = () => {
   kbIdCopy.value = kbId.value;
   kbId.value = '';
-});
+};
+
+window.addEventListener('beforeunload', saveFileToBeSendList);
 </script>
 
 <style lang="scss" scoped>

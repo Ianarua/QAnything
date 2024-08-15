@@ -254,6 +254,7 @@ const uplolad = async () => {
   uploadFileList.value.forEach((file: IFileListItem) => {
     if (file.status == 'loading') {
       list.push(file);
+      file.status = 'uploading';
     }
   });
   const formData = new FormData();
@@ -279,8 +280,8 @@ const uplolad = async () => {
     .then(data => {
       // 在此处对接口返回的数据进行处理
       if (data.code === 200) {
+        // 上传相同文件
         if (data.data.length === 0) {
-          // 上传相同文件
           message.warn(data.msg || '出错了');
           handleCancel();
           list.forEach(item => {
@@ -291,9 +292,7 @@ const uplolad = async () => {
         }
         list.forEach((item, index) => {
           let status = data.data[index].status;
-          if (status == 'green' || status == 'gray') {
-            status = 'success';
-          } else {
+          if (!(status === 'green' || status === 'gray')) {
             status = 'error';
           }
           uploadFileList.value[item.order].status = status;
@@ -308,6 +307,12 @@ const uplolad = async () => {
           uploadFileList.value[item.order].errorText = data?.msg || common.upFailed;
         });
       }
+    })
+    .catch(() => {
+      list.forEach(item => {
+        uploadFileList.value[item.order].status = 'error';
+        uploadFileList.value[item.order].errorText = common.upFailed;
+      });
     });
   // .finally(() => {
   //   // getDetails();
