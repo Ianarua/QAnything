@@ -179,14 +179,14 @@ const acceptList = [
   // '.wav',
 ];
 
-// 文件大小限制
-const fileSizeLimit = {
-  document: 30 * 1024 * 1024, // 单个文档小于30M
-  image: 5 * 1024 * 1024, // 单张图片小于5M
-};
+// // 文件大小限制
+// const fileSizeLimit = {
+//   document: 30 * 1024 * 1024, // 单个文档小于30M
+//   image: 5 * 1024 * 1024, // 单张图片小于5M
+// };
 
 // 文件总大小限制
-const totalSizeLimit = 125 * 1024 * 1024; // 文件总大小不超过125MB
+// const totalSizeLimit = 125 * 1024 * 1024; // 文件总大小不超过125MB
 
 //上传前校验
 const beforeFileUpload = async (file, index) => {
@@ -194,13 +194,13 @@ const beforeFileUpload = async (file, index) => {
     // 检查文件扩展名是否被接受
     if (file.name && acceptList.includes('.' + file.name.split('.').pop().toLowerCase())) {
       // 根据文件类型设置大小限制
-      const limit = file.type.startsWith('image/') ? fileSizeLimit.image : fileSizeLimit.document;
+      // const limit = file.type.startsWith('image/') ? fileSizeLimit.image : fileSizeLimit.document;
 
-      // 检查文件大小是否超过限制
-      if (file.size > limit) {
-        reject(`文件太大，不能超过 ${limit / 1024 / 1024} MB`);
-        return;
-      }
+      // // 检查文件大小是否超过限制
+      // if (file.size > limit) {
+      //   reject(`文件太大，不能超过 ${limit / 1024 / 1024} MB`);
+      //   return;
+      // }
 
       // 如果文件通过所有检查，将其添加到上传列表
       uploadFileList.value.push({
@@ -223,15 +223,15 @@ const beforeFileUpload = async (file, index) => {
 const fileChange = e => {
   const files: FileList = e.target.files;
   // 先检查文件总大小
-  let totalFilesSize = 0;
-  Array.from(files).forEach(file => {
-    totalFilesSize += file.size;
-    // 检查文件总大小是否超过限制
-    if (totalFilesSize >= totalSizeLimit) {
-      message.error('文件总大小超过125MB');
-      return;
-    }
-  });
+  // let totalFilesSize = 0;
+  // Array.from(files).forEach(file => {
+  //   totalFilesSize += file.size;
+  //   // 检查文件总大小是否超过限制
+  //   // if (totalFilesSize >= totalSizeLimit) {
+  //   //   message.error('文件总大小超过125MB');
+  //   //   return;
+  //   // }
+  // });
   Array.from(files).forEach(async (file: any, index) => {
     try {
       await beforeFileUpload(file, index);
@@ -308,10 +308,10 @@ const uplolad = async () => {
           uploadFileList.value[item.order].errorText = data?.msg || common.upFailed;
         });
       }
-    })
-    .finally(() => {
-      getDetails();
     });
+  // .finally(() => {
+  //   // getDetails();
+  // });
 };
 
 const handleOk = async () => {

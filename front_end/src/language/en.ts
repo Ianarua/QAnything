@@ -21,10 +21,9 @@ export default {
     dragUrl: 'Drag files here, or',
     click: 'Click',
     close: 'Close',
-    updesc1:
-      'Support: md, txt, pdf, jpg, png, jpeg, docx, xlsx, pptx, eml, csv. single document less than 30M, single picture less than 5M, total file size must not exceed 125M',
+    updesc1: 'Support: md, txt, pdf, jpg, png, jpeg, docx, xlsx, pptx, eml, csv.',
     updesc2:
-      'Can upload files in batches, supported file type: md, txt, pdf, jpg, png, jpeg, docx, xlsx, pptx, eml, csv, single document less than 30MB, single image less than 5MB, total file size must not exceed 125M',
+      'Can upload files in batches, supported file type: md, txt, pdf, jpg, png, jpeg, docx, xlsx, pptx, eml, csv. ',
     confirm: 'Confirm',
     confirm2: 'Confirm',
     confirmApplication: 'Confirm application',

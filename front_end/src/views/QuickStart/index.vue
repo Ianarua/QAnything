@@ -335,7 +335,9 @@ const scrollBottom = () => {
 // fileBlock的数组，为缓存拿的和这次上传的联合起来的
 const fileBlockArr = computed<IFileListItem[]>(() => {
   const arr = historyList.value?.fileToBeSendList.concat(uploadFileListQuick?.value) || [];
-  return arr.filter(item => item.file_id.length !== 0);
+  console.log(arr);
+  return arr.filter(item => item.status !== 'error');
+  // return arr;
 });
 
 onMounted(() => {
