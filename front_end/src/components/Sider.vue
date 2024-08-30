@@ -41,10 +41,11 @@
           {{ getLanguage().home.newConversationQuick }}
         </div>
         <SiderCardItem
-          v-for="item of historyList"
+          v-for="item of cardListData"
           :key="item.historyId"
           :card-data="item"
           @click="quickClickHandle(1, item)"
+          @edit="editHandle"
         />
       </div>
     </div>
@@ -173,6 +174,37 @@ const quickClickHandle = async (type: 0 | 1, cardData?: IHistoryList) => {
       });
     });
   }
+};
+
+const cardListData = ref([]);
+
+watch(
+  () => historyList.value,
+  newValue => {
+    cardListData.value = [];
+    // 当 historyList 更新时，重新创建 cardListData
+    newValue.forEach(item => {
+      cardListData.value.push({
+        ...item,
+        isEdit: false, // 给每个新项添加 isEdit 属性
+      });
+    });
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
+
+// 快速开始的card编辑状态只能有一个，子组件编辑需要通知父组件
+const editHandle = ({ historyId, isEdit }: { historyId: number; isEdit: boolean }) => {
+  cardListData.value.forEach(item => {
+    item.isEdit = false;
+    if (item.historyId === historyId) {
+      item.isEdit = isEdit;
+    }
+  });
+  console.log(historyId, isEdit);
 };
 
 onUnmounted(() => {

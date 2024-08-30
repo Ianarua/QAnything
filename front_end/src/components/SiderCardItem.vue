@@ -31,8 +31,8 @@
       </template>
       <div class="content">
         <div class="title">
-          <p v-if="!isEdit" class="title-text">{{ cardData.title }}</p>
-          <div v-else-if="isEdit" class="editing">
+          <p v-if="!cardData.isEdit" class="title-text">{{ cardData.title }}</p>
+          <div v-else-if="cardData.isEdit" class="editing">
             <p class="title-text">
               <a-input v-model:value="editTitle" type="text" />
             </p>
@@ -69,11 +69,13 @@ interface IHistoryListOptional extends Partial<IHistoryList> {
 
 // title必选, historyId、kbId可选
 interface IProps {
-  cardData: IHistoryListOptional;
+  cardData: IHistoryListOptional & { isEdit: boolean };
 }
 
 const props = defineProps<IProps>();
 const { cardData } = toRefs(props);
+
+const emit = defineEmits(['edit']);
 
 // // 管理知识库
 // const manage = (item: IKnowledgeItem) => {
@@ -82,7 +84,7 @@ const { cardData } = toRefs(props);
 //   setDefault(pageStatus.optionlist);
 // };
 
-const isEdit = ref(false);
+// const isEdit = ref(false);
 
 // 暂存修改后的title
 const editTitle = ref('');
@@ -90,15 +92,17 @@ const editTitle = ref('');
 // 点击修改标题
 const editKnowledgeBase = () => {
   editTitle.value = cardData.value.title;
-  isEdit.value = true;
+  emit('edit', { historyId: cardData.value.historyId, isEdit: true });
+  // isEdit.value = true;
 };
 
 //确定修改
 const ok = async () => {
   try {
     renameHistory(chatId.value, editTitle.value);
+    emit('edit', { historyId: cardData.value.historyId, isEdit: false });
     editTitle.value = '';
-    isEdit.value = false;
+    // isEdit.value = false;
     message.success(common.renameSucceeded);
   } catch (err) {
     message.error(err.msg || common.renameFailed);
@@ -107,7 +111,8 @@ const ok = async () => {
 //取消修改
 const close = () => {
   editTitle.value = '';
-  isEdit.value = false;
+  // isEdit.value = false;
+  emit('edit', { historyId: cardData.value.historyId, isEdit: false });
 };
 
 // 删除知识库

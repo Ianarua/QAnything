@@ -43,7 +43,7 @@ export default {
     errorKnowledge: 'Type the name of the Knowledge Base',
     successTip: 'Succeeded',
     faileTip: 'Failed',
-    deleteDec: 'Delete this Knowledge Base? Not recoverable after deletion',
+    deleteDec: 'Delete this conversations? Not recoverable after deletion',
     chooseError: 'Select at least one Knowledge Base',
     saveTip: 'Save QAnything conversations as images?',
     clearTip: 'Delete all conversations?',
@@ -124,7 +124,7 @@ export default {
   },
   home: {
     newConversation: 'New Conversation',
-    newConversationQuick: 'Start new conversation',
+    newConversationQuick: 'Start New Conversation',
     documentId: 'Document ID',
     documentName: 'Document Name',
     documentStatus: 'Document Status',
