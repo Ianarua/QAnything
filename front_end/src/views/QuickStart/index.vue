@@ -664,6 +664,7 @@ const type = ref('');
 
 const uploadFile = () => {
   if (!kbId.value) return;
+  if (showLoading.value) return;
   setModalVisible(true);
   setModalTitle(home.upload);
 };
