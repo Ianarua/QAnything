@@ -44,7 +44,7 @@ export default {
     errorKnowledge: '请输入知识库名称',
     successTip: '删除成功',
     faileTip: '删除失败',
-    deleteDec: '确认删除该该知识库？删除后无法恢复',
+    deleteDec: '确认删除该知识库？删除后无法恢复',
     chooseError: '请至少选择一个知识库',
     saveTip: '是否将会话保存为图片',
     clearTip: '清空会话？',
