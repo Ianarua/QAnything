@@ -62,7 +62,7 @@ const handleConfirm = () => {
   handleOk(handleOkCB);
 };
 
-defineExpose({ handleOk });
+defineExpose({ handleOk, handleConfirm });
 </script>
 
 <style lang="scss" scoped>

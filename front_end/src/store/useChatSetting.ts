@@ -59,9 +59,9 @@ export const useChatSetting = defineStore(
       // 再把当前的active设置为true
       chatSetting.active = true;
       if (chatSetting.modelType === 'openAI') {
-        chatSettingConfigured.value[0] = chatSetting;
+        chatSettingConfigured.value[0] = { ...chatSetting };
       } else if (chatSetting.modelType === 'ollama') {
-        chatSettingConfigured.value[1] = chatSetting;
+        chatSettingConfigured.value[1] = { ...chatSetting };
       } else {
         // 自定义
         chatSetting.modelType = chatSetting.modelName;
@@ -70,7 +70,7 @@ export const useChatSetting = defineStore(
         );
         if (index !== -1 && chatSetting.customId !== 0) {
           // 找到相同 id 的自定义，替换
-          chatSettingConfigured.value[index] = chatSetting;
+          chatSettingConfigured.value[index] = { ...chatSetting };
         } else {
           // 没有找到相同 id 的自定义或为第一个，添加
           chatSetting.customId = chatSettingConfigured.value.at(-1).customId + 1;

@@ -437,7 +437,7 @@ async function onCheck() {
   }
 }
 
-// 如果验证通过，则调用submit
+// 添加自定义模型 -> 如果验证通过，则调用submit
 function onSubmit() {
   setChatSettingConfigured(chatSettingForm.value);
   message.success('添加成功');
@@ -449,13 +449,17 @@ const selectChange = (value: 'openAI' | 'ollama' | number) => {
   openAIModelMax.value = 200;
   // 重新设置当前的表单项
   if (value === 'openAI') {
-    chatSettingForm.value = JSON.parse(JSON.stringify(chatSettingConfigured.value[0]));
+    chatSettingForm.value = {
+      ...chatSettingConfigured.value.find(item => item.modelType === 'openAI'),
+    };
   } else if (value === 'ollama') {
-    chatSettingForm.value = JSON.parse(JSON.stringify(chatSettingConfigured.value[1]));
+    chatSettingForm.value = {
+      ...chatSettingConfigured.value.find(item => item.modelType === 'ollama'),
+    };
   } else {
-    const chatForm = chatSettingConfigured.value.find(item => item.customId === value);
-    // find出来是浅拷贝
-    chatSettingForm.value = JSON.parse(JSON.stringify(chatForm));
+    chatSettingForm.value = {
+      ...chatSettingConfigured.value.find(item => item.customId === value),
+    };
   }
 };
 
@@ -481,12 +485,12 @@ function transformCheckbox(type: 0 | 1) {
 
 // 初始化表单项，将active = true的表单项作为默认
 const initForm = () => {
-  const activeForm = chatSettingConfigured.value.find(item => item.active === true);
+  const activeForm = { ...chatSettingConfigured.value.find(item => item.active === true) };
   // 如果是openai，就设置最大值
   if (activeForm.modelType === 'openAI' && openAISettingMap.has(activeForm.apiModelName as any)) {
     openAIModelSelect(activeForm.apiModelName);
   }
-  chatSettingForm.value = JSON.parse(JSON.stringify(activeForm));
+  chatSettingForm.value = activeForm;
 };
 
 // 监听多选框，转化到form表单项中

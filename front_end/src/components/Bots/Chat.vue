@@ -367,6 +367,8 @@ const send = async () => {
   if (!(await checkChatSetting())) {
     message.error('模型设置错误，请先检查模型配置');
     return;
+  } else {
+    saveChatSetting();
   }
   const q = question.value;
   question.value = '';
@@ -565,6 +567,9 @@ const confirm = async () => {
 const chatSettingForDialogRef = ref<InstanceType<typeof ChatSettingDialog>>();
 const checkChatSetting = () => {
   return chatSettingForDialogRef.value.handleOk();
+};
+const saveChatSetting = () => {
+  return chatSettingForDialogRef.value.handleConfirm();
 };
 
 // 检查信息来源的文件是否支持窗口化渲染

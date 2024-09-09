@@ -81,7 +81,6 @@ export const useKnowledgeBase = defineStore(
             setDefault(pageStatus.default);
           }
         }
-        console.log(knowledgeBaseList.value);
       } catch (e) {
         message.error(e.msg || common.error);
       }
