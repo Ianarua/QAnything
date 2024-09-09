@@ -74,7 +74,7 @@ export const useChatSetting = defineStore(
         } else {
           // 没有找到相同 id 的自定义或为第一个，添加
           chatSetting.customId = chatSettingConfigured.value.at(-1).customId + 1;
-          chatSettingConfigured.value.push(chatSetting);
+          chatSettingConfigured.value.push({ ...chatSetting });
         }
       }
     };
