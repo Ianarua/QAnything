@@ -58,6 +58,7 @@ const TIMEINFO = new Set([
   'llm_first_return',
   'first_return',
   'llm_completed',
+  'obtain_images_time',
   'chat_completed',
 ]);
 
@@ -166,9 +167,9 @@ const openInfoModal = () => {
           timeInfo.value,
           [...TIMEINFO.values()].slice(0, 7)
         )} = first_return: ${timeInfo.value['first_return']}
-        + llm_completed：${timeInfo.value['llm_completed']} = chat_completed：${
-          timeInfo.value['chat_completed']
-        }`
+        + llm_completed：${timeInfo.value['llm_completed']}
+        + obtain_images_time: ${timeInfo.value['obtain_images_time'] || '0.00s'}
+        = chat_completed：${timeInfo.value['chat_completed']}`
       ),
       h(TypographyParagraph, {}, () => `${common.modelInfoToken}: ${formatInfo(tokenInfo.value)}`),
       h(TypographyParagraph, {}, () => [

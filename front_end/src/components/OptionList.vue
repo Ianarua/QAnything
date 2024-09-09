@@ -15,7 +15,9 @@
           <span>{{ home.conversation }}</span>
         </div>
         <p class="kb-name">
-          <span class="name">{{ currentKbName }}</span>
+          <span class="name">
+            {{ currentKbName.slice(0, 15) }}
+          </span>
           <span class="id">
             {{ home.knowledgeID }} {{ currentId }}{{ navIndex === 1 ? '_FAQ' : '' }}
           </span>

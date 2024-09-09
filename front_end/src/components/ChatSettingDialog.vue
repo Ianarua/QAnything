@@ -11,7 +11,7 @@
     >
       <div class="model-set-dialog-comp">
         <div class="select-model">
-          <ChatSettingForm ref="chatSettingFormRef" :context-length="contextLength" />
+          <ChatSettingForm ref="chatSettingFormRef" />
         </div>
         <div class="footer">
           <a-button @click="handleCancel">{{ common.cancel }}</a-button>
@@ -29,10 +29,8 @@ import { message } from 'ant-design-vue';
 import { useChat } from '@/store/useChat';
 import { useChatSetting } from '@/store/useChatSetting';
 import ChatSettingForm from '@/components/ChatSettingForm.vue';
-import { useHomeChat } from '@/store/useHomeChat';
 import { getLanguage } from '@/language';
 
-const { contextLength } = storeToRefs(useHomeChat());
 const { showSettingModal } = storeToRefs(useChat());
 const { setChatSettingConfigured } = useChatSetting();
 
@@ -62,7 +60,7 @@ const handleConfirm = () => {
   handleOk(handleOkCB);
 };
 
-defineExpose({ handleOk, handleConfirm });
+defineExpose({ handleOk });
 </script>
 
 <style lang="scss" scoped>

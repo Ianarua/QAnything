@@ -133,15 +133,19 @@ const removeKb = async data => {
 };
 
 // 模型设置
-const chatSettingFormRef = ref('');
-const handleOk = async () => {
-  // @ts-ignore 这里确定有onCheck，因为暴露出来了
+const chatSettingFormRef = ref<InstanceType<typeof ChatSettingForm>>();
+const handleOk = async (_, msg = '应用成功') => {
   const checkRes = await chatSettingFormRef.value.onCheck();
   if (!Object.hasOwn(checkRes, 'errorFields')) {
     setChatSettingConfigured(checkRes);
-    message.success('应用成功');
+    console.log(msg);
+    message.success(msg);
+    return true;
   }
+  return false;
 };
+
+defineExpose({ handleOk });
 </script>
 <style lang="scss" scoped>
 .bot-detail-edit-comp {

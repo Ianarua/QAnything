@@ -24,15 +24,6 @@ export const useHomeChat = defineStore(
       QA_List.value = value;
     };
 
-    // 上下文数量
-    let contextLength = ref<number>(QA_List.value.length);
-    watch(
-      () => QA_List.value.length,
-      () => {
-        contextLength.value = QA_List.value.length;
-      }
-    );
-
     // 历史记录列表
     const historyList = ref<IHistoryList[]>([]);
     const setHistoryList = (curHistoryList: IHistoryList[]) => {
@@ -120,7 +111,6 @@ export const useHomeChat = defineStore(
     return {
       QA_List,
       setQaList,
-      contextLength,
       historyList,
       addHistoryList,
       deleteHistoryList,

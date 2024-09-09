@@ -1,6 +1,6 @@
 <template>
   <div class="edit-detail">
-    <BotDetailEdit />
+    <BotDetailEdit ref="botDetailEditRef" />
     <div class="bots-chat-page">
       <Chat :bot-info="curBot" chat-type="edit" />
     </div>
@@ -11,6 +11,10 @@ import BotDetailEdit from '@/components/Bots/BotDetailEdit.vue';
 import Chat from '@/components/Bots/Chat.vue';
 import { useBots } from '@/store/useBots';
 const { curBot } = storeToRefs(useBots());
+
+const botDetailEditRef = ref<InstanceType<typeof BotDetailEdit>>();
+
+provide('checkSettingOk', () => botDetailEditRef.value.handleOk(null, '模型配置已自动保存'));
 </script>
 <style lang="scss" scoped>
 .edit-detail {
