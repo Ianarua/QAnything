@@ -318,6 +318,10 @@ const uplolad = async () => {
         });
       }
     })
+    .catch(e => {
+      message.error(e.msg || '出错了');
+      notification.close('upload');
+    })
     .finally(() => {
       getDetails();
     });

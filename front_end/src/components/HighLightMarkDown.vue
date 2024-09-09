@@ -22,6 +22,7 @@ const props = defineProps({
 // 使用markdown-it实例并开启highlight.js支持
 const md = new MarkdownIt({
   html: true,
+  breaks: true,
   highlight: (str, lang) => {
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -43,8 +44,7 @@ const html = ref('');
 watch(
   () => props.content,
   newvalue => {
-    // 单个\n不识别换行，两个以上\n才换行
-    html.value = md.render(newvalue.replace(/\n(?!\n)/g, '\n\n'));
+    html.value = md.render(newvalue);
   },
   { immediate: true }
 );
