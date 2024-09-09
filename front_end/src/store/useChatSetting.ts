@@ -40,6 +40,7 @@ export const useChatSetting = defineStore(
         modelType: 'ollama',
         apiKey: 'ollama',
         apiBase: 'http://localhost:11434/v1',
+        apiContextLength: 2048,
         active: false,
       },
       {

@@ -73,7 +73,7 @@
           </template>
         </a-select>
       </a-form-item>
-      <div class="form-item-inline">
+      <div v-if="chatSettingForm.modelType !== 'ollama'" class="form-item-inline">
         <a-form-item ref="apiContextLength" name="apiContextLength">
           <template #label>
             <a-popover placement="topLeft">
@@ -104,6 +104,30 @@
           />
         </a-form-item>
       </div>
+      <a-form-item v-else ref="apiContextLength" name="apiContextLength">
+        <template #label>
+          <a-popover placement="topLeft">
+            <template #content>
+              <p>{{ common.apiContextLengthLabelDescription }}</p>
+            </template>
+            <span>{{ common.apiContextLengthLabel }}</span>
+          </a-popover>
+        </template>
+        <a-tooltip color="#fff" placement="topLeft">
+          <template #title>
+            <span style="color: #666; user-select: text">{{ common.apiContextLengthOllama }}</span>
+            <a-typography-link
+              href="https://github.com/netease-youdao/QAnything/blob/qanything-v2/FAQ_zh.md"
+              target="_blank"
+            >
+              https://github.com/netease-youdao/QAnything/blob/qanything-v2/FAQ_zh.md
+            </a-typography-link>
+          </template>
+          <p class="ollama-token">
+            {{ common.apiContextLengthOllama }}
+          </p>
+        </a-tooltip>
+      </a-form-item>
       <div class="form-item-inline">
         <a-form-item ref="maxToken" name="maxToken">
           <template #label>
@@ -593,6 +617,16 @@ onBeforeMount(() => {
 
 :deep(.ant-slider:hover .ant-slider-track) {
   background-color: #5a47e5;
+}
+
+.ollama-token {
+  height: 34px;
+  padding-right: 5px;
+  line-height: 34px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: keep-all;
 }
 
 .form-item-inline {
