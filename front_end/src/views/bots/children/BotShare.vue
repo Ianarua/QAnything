@@ -3,7 +3,7 @@
     <div v-if="isLoading" class="loading">
       <a-spin :indicator="indicator" />
     </div>
-    <ChatShare v-else :bot-info="botInfo" :virtual-user-id="userId" chat-type="share" />
+    <ChatShare v-else :bot-info="botInfo" virtual-user-id="zzp" chat-type="share" />
     <ChatSourceDialog />
   </div>
 </template>
@@ -21,7 +21,7 @@ const { getCurrentRoute } = routeController();
 const botInfo = ref(null);
 const botId = ref(null);
 const isLoading = ref(true);
-const userId = ref(null);
+const userId = ref(null); // 原来用的是浏览器指纹，改成了zzp，所以这个暂时没用️
 
 const indicator = h(LoadingOutlined, {
   style: {
