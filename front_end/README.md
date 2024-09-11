@@ -55,3 +55,7 @@ yarn serve
 # 或
 npm run serve
 ```
+
+## 提示
+
+1. 如果修改了chatSetting配置，需要在package.json的version字段修改

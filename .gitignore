@@ -22,6 +22,7 @@ front_end/.eslintrc-auto-import.json
 front_end/auto-imports.d.ts
 front_end/components.d.ts
 front_end/stats.html
-front_end/version.txt
+front_end/version.json
 front_end/*.zip
+front_end/analysis-chart.html
 tmp_files/

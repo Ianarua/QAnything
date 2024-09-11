@@ -1,6 +1,8 @@
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import eslintPlugin from 'vite-plugin-eslint';
+import copy from 'rollup-plugin-copy';
+import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 import fs from 'fs';
 //按需加载antdvue
@@ -25,10 +27,12 @@ function readFolder(entryPath, callback) {
     }
   });
 }
+
 // 获取文件后缀名
 function getExtname(allPath) {
   return path.extname(allPath);
 }
+
 //
 const additionalData = (function () {
   let resources = '';
@@ -79,7 +83,16 @@ export default defineConfig(({ mode }) => {
         inject: 'body-last',
         customDomId: '__svg__icons__dom__',
       }),
-
+      visualizer({
+        emitFile: false,
+        filename: 'analysis-chart.html',
+        open: false, // 在打包后是否自动展示
+      }),
+      copy({
+        targets: [{ src: './version.json', dest: 'dist/qanything' }],
+        hook: 'writeBundle',
+        verbose: true, // 打印复制的日志
+      }),
       ...plugins,
     ],
     resolve: {
