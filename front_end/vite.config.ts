@@ -1,7 +1,8 @@
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import eslintPlugin from 'vite-plugin-eslint';
-import copy from 'rollup-plugin-copy';
+import viteImagemin from 'vite-plugin-imagemin';
+import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 import fs from 'fs';
@@ -46,7 +47,41 @@ const additionalData = (function () {
   });
   return resources;
 })();
-const plugins = [] as any;
+
+const plugins = [
+  // 图片资源压缩
+  viteImagemin({
+    gifsicle: {
+      // gif图片压缩
+      optimizationLevel: 3, // 选择1到3之间的优化级别
+      interlaced: false, // 隔行扫描gif进行渐进式渲染
+    },
+    optipng: {
+      // png
+      optimizationLevel: 7, // 选择0到7之间的优化级别
+    },
+    mozjpeg: {
+      // jpeg
+      quality: 20, // 压缩质量，范围从0(最差)到100(最佳)。
+    },
+    pngquant: {
+      // png
+      quality: [0.8, 0.9], // Min和max是介于0(最差)到1(最佳)之间的数字，类似于JPEG。达到或超过最高质量所需的最少量的颜色。如果转换导致质量低于最低质量，图像将不会被保存。
+      speed: 4, // 压缩速度，1(强力)到11(最快)
+    },
+  }),
+  viteCompression({
+    algorithm: 'gzip', // 压缩算法
+    ext: 'gz', // 后缀名
+    deleteOriginFile: true, // 压缩后是否删除压缩源文件
+  }),
+  visualizer({
+    emitFile: false,
+    filename: 'analysis-chart.html',
+    gzipSize: true, // 收集 gzip 大小并将其显示
+    open: true, // 在打包后是否自动展示
+  }),
+] as any;
 
 function resovePath(paths) {
   return path.resolve(__dirname, paths);
@@ -83,16 +118,6 @@ export default defineConfig(({ mode }) => {
         inject: 'body-last',
         customDomId: '__svg__icons__dom__',
       }),
-      visualizer({
-        emitFile: false,
-        filename: 'analysis-chart.html',
-        open: false, // 在打包后是否自动展示
-      }),
-      copy({
-        targets: [{ src: './version.json', dest: 'dist/qanything' }],
-        hook: 'writeBundle',
-        verbose: true, // 打印复制的日志
-      }),
       ...plugins,
     ],
     resolve: {
@@ -121,6 +146,26 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: `dist/qanything`,
+      rollupOptions: {
+        output: {
+          chunkFileNames: 'js/[name]-[hash].js', // 引入文件名的名称
+          entryFileNames: 'js/[name]-[hash].js', // 包的入口文件名称
+          assetFileNames: '[ext]/[name]-[hash].[ext]', // 资源文件像 字体，图片等
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            }
+          },
+        },
+      },
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
+      sourcemap: false,
     },
 
     base: env.VITE_APP_WEB_PREFIX,
@@ -135,6 +180,11 @@ export default defineConfig(({ mode }) => {
       },
       cors: true,
       proxy: {
+        '/local_doc_qa': {
+          target: 'https://qanything-dev-gpu214.inner.youdao.com/api',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/local_doc_qa/, '/local_doc_qa'),
+        },
         [env.VITE_APP_API_PREFIX]: {
           target: env.VITE_APP_API_HOST,
           changeOrigin: true,

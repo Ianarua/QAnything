@@ -3,16 +3,17 @@
   "version": "2.0.1",
   "tagname": "qanything",
   "scripts": {
-    "dev": "npm run postbuild && vite",
+    "dev": "vite",
     "test": "vite build --mode test",
     "analyzer": "vite build --mode test",
-    "build": "npm run postbuild && vite build",
-    "serve": "npm run build && vite preview --port 5052",
+    "build": "vite build",
+    "serve": "vite preview --port 5052",
     "lint-staged": "lint-staged",
     "cdn-test": "bash ./cicdn.sh test",
     "cdn-prod": "bash ./cicdn.sh prod",
     "auto": "node ./autoHandle/create.js",
-    "postbuild": "node writeVersion.js"
+    "prebuild": "node writeVersion.js",
+    "predev": "node writeVersion.js"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
@@ -72,7 +73,7 @@
     "inquirer": "^8.2.0",
     "lint-staged": "^12.0.2",
     "prettier": "^2.4.1",
-    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "rxjs": "^7.4.0",
     "sass": "^1.42.1",
@@ -81,7 +82,9 @@
     "unplugin-auto-import": "^0.16.7",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^5.0.11",
+    "vite-plugin-compression": "^0.5.1",
     "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-imagemin": "^0.6.1",
     "vite-plugin-style-import": "^2.0.0",
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-eslint-parser": "^9.3.2"
