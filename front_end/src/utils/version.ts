@@ -45,11 +45,15 @@ export const checkVersion = async () => {
   const versionFile = await getVersionFile();
   const localVersion = getLocalVersion(versionFile);
   const cacheVersion = getCacheVersion();
-  // 判断不相等并且 缓存有版本（没有则代表是第一次进入）
-  if (localVersion !== cacheVersion && cacheVersion) {
-    openNotification(localVersion, cacheVersion);
+  // 判断不相等
+  if (localVersion !== cacheVersion) {
+    if (cacheVersion) {
+      // 缓存有版本（没有则代表是第一次进入）
+      openNotification(localVersion, cacheVersion);
+    } else {
+      setCacheVersion(localVersion);
+    }
   }
-  setCacheVersion(localVersion);
 };
 
 const clearChatSettingStorage = () => {
@@ -66,7 +70,7 @@ const openNotification = (localVersion: string, cacheVersion: string) => {
         Button,
         {
           type: 'primary',
-          onClick: () => confirm(key),
+          onClick: () => confirm(key, localVersion),
         },
         { default: () => '更新' }
       ),
@@ -75,9 +79,10 @@ const openNotification = (localVersion: string, cacheVersion: string) => {
   });
 };
 
-const confirm = (key: string) => {
+const confirm = (key: string, localVersion: string) => {
   notification.close(key);
   clearChatSettingStorage();
+  setCacheVersion(localVersion);
   window.location.reload();
 
   notification.success({
