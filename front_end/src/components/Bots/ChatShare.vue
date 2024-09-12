@@ -176,12 +176,6 @@
                 </span>
               </a-popover>
               <a-popover>
-                <template #content>{{ common.clearChat }}</template>
-                <span :class="['delete', showLoading ? 'isPreventClick' : '']" @click="deleteChat">
-                  <SvgIcon name="chat-delete" />
-                </span>
-              </a-popover>
-              <a-popover>
                 <template #content>{{ common.modelSettingTitle }}</template>
                 <span class="setting" @click="handleModalChange(true)">
                   <SvgIcon name="chat-setting" />
@@ -215,7 +209,6 @@
 </template>
 <script lang="ts" setup>
 import { apiBase } from '@/services';
-import { defineProps } from 'vue';
 import { IChatItem } from '@/utils/types';
 import { useThrottleFn, useClipboard } from '@vueuse/core';
 import { message } from 'ant-design-vue';
@@ -582,13 +575,6 @@ const downloadChat = () => {
   type.value = 'download';
   showModal.value = true;
   content.value = common.saveTip;
-};
-
-const deleteChat = () => {
-  if (showLoading.value) return;
-  type.value = 'delete';
-  showModal.value = true;
-  content.value = common.clearTip;
 };
 
 const confirm = async () => {
