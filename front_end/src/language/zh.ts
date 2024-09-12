@@ -90,8 +90,8 @@ export default {
     apiModelNameLabel: '模型名称',
     apiContextLengthLabel: '总Token数量',
     apiContextLengthLabelDescription: 'LLM输入和输出的总token数量上限',
-    apiContextLengthOllama:
-      'ollama本地服务上下文长度无法通过参数设置，默认为2048，具体修改方式请参考：[FAQ]',
+    // apiContextLengthOllamaBefore: '您需要先【手动修改模型配置】',
+    // apiContextLengthOllamaAfter: '，然后返回前端进行【总Token数量选择】',
     maxTokenLabel: '输出Token数量',
     maxTokenLabelDescription: 'LLM输出的token数量上限. 最大值为: 总Token数量 / 4',
     chunkSizeLabel: '文本分片大小',

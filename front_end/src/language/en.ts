@@ -95,8 +95,8 @@ export default {
     apiContextLengthLabel: 'Total Tokens',
     apiContextLengthLabelDescription:
       'The upper limit of the total number of tokens input and outputted by LLM',
-    apiContextLengthOllama:
-      'The background length of the ollama local service cannot be set by the parameter, the default is 2048, please refer to [FAQ]',
+    // apiContextLengthOllamaBefore: '您需要先',
+    // apiContextLengthOllamaAfter: '【手动修改ollama模型配置】,然后返回前端进行相应的配置更新',
     maxTokenLabel: 'Output Tokens',
     maxTokenLabelDescription:
       'The upper limit of the number of tokens output by LLM. The maximum value is the Total Tokens / 4',

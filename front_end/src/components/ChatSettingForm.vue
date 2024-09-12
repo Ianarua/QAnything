@@ -4,7 +4,7 @@
       ref="formRef"
       :model="chatSettingForm"
       :rules="rules"
-      :label-col="{ span: 6 }"
+      :label-col="{ style: { width: '150px' } }"
       :wrapper-col="{ span: 24 }"
       style="width: 100%"
       label-align="left"
@@ -73,61 +73,50 @@
           </template>
         </a-select>
       </a-form-item>
-      <div v-if="chatSettingForm.modelType !== 'ollama'" class="form-item-inline">
+      <div class="form-item-inline">
         <a-form-item ref="apiContextLength" name="apiContextLength">
           <template #label>
             <a-popover placement="topLeft">
               <template #content>
-                <p>{{ common.apiContextLengthLabelDescription }}</p>
+                <p>
+                  {{ common.apiContextLengthLabelDescription }}
+                </p>
               </template>
               <span>{{ common.apiContextLengthLabel }}</span>
             </a-popover>
           </template>
           <a-slider
             v-model:value="apiContextTokenK"
-            :min="4"
+            :min="chatSettingForm.modelType === 'ollama' ? 2 : 4"
             :max="openAIModelMax || 200"
             :step="1"
             :tip-formatter="(value: number) => `${value}K`"
           />
+          <div v-if="chatSettingForm.modelType === 'ollama'" class="content-length-ollama-tip">
+            您需要先
+            <a
+              href="https://github.com/netease-youdao/QAnything/blob/qanything-v2/FAQ_zh.md"
+              target="_blank"
+              style="color: #3c87ff"
+            >
+              [手动修改ollama模型配置]
+            </a>
+            然后返回前端进行
+            <span style="color: #888; background: rgba(150, 150, 150, 0.1)"> 总Token数量选择 </span>
+          </div>
         </a-form-item>
         <a-form-item name="apiContextLength">
           <a-input-number
             v-model:value="apiContextTokenK"
-            :min="4"
+            :min="chatSettingForm.modelType === 'ollama' ? 2 : 4"
             :max="openAIModelMax || 200"
             :step="1"
-            style="margin-left: 16px"
             :precision="0"
             :controls="false"
             addon-after="K"
           />
         </a-form-item>
       </div>
-      <a-form-item v-else ref="apiContextLength" name="apiContextLength">
-        <template #label>
-          <a-popover placement="topLeft">
-            <template #content>
-              <p>{{ common.apiContextLengthLabelDescription }}</p>
-            </template>
-            <span>{{ common.apiContextLengthLabel }}</span>
-          </a-popover>
-        </template>
-        <a-tooltip color="#fff" placement="topLeft">
-          <template #title>
-            <span style="color: #666; user-select: text">{{ common.apiContextLengthOllama }}</span>
-            <a-typography-link
-              href="https://github.com/netease-youdao/QAnything/blob/qanything-v2/FAQ_zh.md"
-              target="_blank"
-            >
-              https://github.com/netease-youdao/QAnything/blob/qanything-v2/FAQ_zh.md
-            </a-typography-link>
-          </template>
-          <p class="ollama-token">
-            {{ common.apiContextLengthOllama }}
-          </p>
-        </a-tooltip>
-      </a-form-item>
       <div class="form-item-inline">
         <a-form-item ref="maxToken" name="maxToken">
           <template #label>
@@ -151,7 +140,6 @@
             :min="1"
             :max="chatSettingForm.apiContextLength / TOKENRATIO"
             :step="1"
-            style="margin-left: 16px"
             :precision="0"
             :controls="false"
           />
@@ -180,7 +168,6 @@
             :min="400"
             :max="chatSettingForm.apiContextLength / TOKENRATIO"
             :step="1"
-            style="margin-left: 16px"
             :precision="0"
             :controls="false"
           />
@@ -204,7 +191,6 @@
             :min="0"
             :max="1"
             :step="0.01"
-            style="margin-left: 16px"
             :precision="2"
             :controls="false"
           />
@@ -228,7 +214,6 @@
             :min="0"
             :max="1"
             :step="0.01"
-            style="margin-left: 16px"
             :precision="2"
             :controls="false"
           />
@@ -252,7 +237,6 @@
             :min="1"
             :max="100"
             :step="1"
-            style="margin-left: 16px"
             :precision="0"
             :controls="false"
           />
@@ -374,9 +358,13 @@ const sliderFormatter = (value: number) => {
 
 // 上下文长度，单位k，绑定到模板上
 const apiContextTokenK = ref(4);
-onMounted(() => {
-  apiContextTokenK.value = chatSettingForm.value.apiContextLength / 1024;
-});
+watch(
+  () => chatSettingForm?.value?.apiContextLength,
+  () => {
+    apiContextTokenK.value = chatSettingForm?.value?.apiContextLength / 1024;
+  }
+);
+
 // 存储需要字节，* 1024
 watch(
   () => apiContextTokenK.value,
@@ -456,6 +444,9 @@ const selectChange = (value: 'openAI' | 'ollama' | number) => {
     chatSettingForm.value = {
       ...chatSettingConfigured.value.find(item => item.modelType === 'ollama'),
     };
+    nextTick(() => {
+      chatSettingForm.value.apiContextLength = 2048;
+    });
   } else {
     chatSettingForm.value = {
       ...chatSettingConfigured.value.find(item => item.customId === value),
@@ -633,6 +624,14 @@ onBeforeMount(() => {
   word-break: keep-all;
 }
 
+.content-length-ollama-tip {
+  position: absolute;
+  top: 34px;
+  font-size: 12px;
+  color: #666;
+  user-select: text;
+}
+
 .form-item-inline {
   display: flex;
   justify-content: flex-end;
@@ -642,7 +641,6 @@ onBeforeMount(() => {
 
     :deep(.ant-form-item-control-input, .ant-form-item-control) {
       flex: 1;
-      margin-left: 25px;
     }
   }
 
@@ -652,8 +650,11 @@ onBeforeMount(() => {
     width: 106px;
   }
 
-  :deep(.ant-form-item-explain-error) {
-    padding-left: 25px;
+  :deep(
+      .ant-form-item
+        .ant-form-item-control:first-child:not([class^="'ant-col-'"]):not([class*="' ant-col-'"])
+    ) {
+    padding-left: 16px;
   }
 }
 </style>
